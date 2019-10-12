@@ -1,2 +1,3 @@
-# amr-pythoncode
-AMR pagerank algorithms in Python
+# aws-pythoncode
+
+Example usage of AWS Services using Python.
