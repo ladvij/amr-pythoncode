@@ -5,6 +5,8 @@ and every two-word sequence in the entire collection of over 200K short jokes
 from Kaggle:
 https://www.kaggle.com/abhinavmoudgil195/short-jokes.
 
+It ultimately returns the top ten probabilities for a target word.
+
 A test file jokestest2-.csv is used for testing.
 
 Usage:
@@ -28,7 +30,7 @@ from collections import Counter
 import string
 import operator
 
-TARGET_WORD = "my"
+TARGET_WORD = "me"
 DUMCHAR = "*"  # used to represent count of the target word
 
 translator = str.maketrans('','',string.punctuation) # use to remove punctuation
@@ -115,10 +117,24 @@ class MRStripes(MRJob):
 
         yield word, result
 
+    def reducer_topten(self,word,probs):
+        """
+        Extracts the top ten probabilities for the target word
+        """
+        if word == TARGET_WORD:
+            for probdict in probs:
+                sorted_dict = sorted(probdict.items(),key=operator.itemgetter(1), reverse=True)
+                max_terms = len(sorted_dict)
+            if max_terms > 10:
+                max_terms = 10
+            for rank in range(max_terms):
+                yield rank+1, sorted_dict[rank]
+
 
     def steps(self):
         return [
-            MRStep(mapper=self.mapper, reducer=self.reducer)
+            MRStep(mapper=self.mapper, reducer=self.reducer),
+            MRStep(reducer=self.reducer_topten)
         ]
 
 if __name__=='__main__':

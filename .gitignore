@@ -1,0 +1,9 @@
+#excel
+*.xslx
+
+#windows installer files
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
